@@ -45,8 +45,8 @@ class Test01_Setup(unittest.TestCase):
         copyFiles(self.files)
 
         #can change the make command here if necessary
-        #fib = subprocess.Popen(["gcc -c sim.c"], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        fib = subprocess.Popen(["gcc", "-c",  "sim.c"], stdout=subprocess.PIPE, stderr=subprocess.PIPE )
+        fib = subprocess.Popen(["gcc sim.c -o sim.out"], shell = True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        #fib = subprocess.Popen(["gcc", "-c",  "sim.c"], stdout=subprocess.PIPE, stderr=subprocess.PIPE )
         errors = fib.stderr.read().strip().decode('utf-8')
         fib.kill()
         fib.terminate()
@@ -72,15 +72,14 @@ class Test02_Execution(unittest.TestCase):
         # Run program with "q" as the only input.
         # Make sure that "\n" follows every input item, as that represents pressing enter
         # If you wanted to enter "a", then "b", then "c", you would do txtContents="a\nb\nc\n"
-        submission = runProgram(txtContents="q\n")
-
+        submission = runProgram(inputFile='simple_loop.in')
+        #print(submission.output)
         # Array of expected strings
-        expectedFile = open("simple_loop.in", "r")
+        expectedFile = open("simple_loop.output", "r")
         expectedArr = expectedFile.read().split("\n")
 
         # Error message
-        errorMsg = f"failed at case:   , - 100"
-        
+        errorMsg = f"failed at case:   , - 100 { submission.output}"        
         # Iterate through every expected string. If it isn't present in the submission's output, display the error message
         for expected in expectedArr:
             # MAKE SURE YOU USE THE `clean()` function!
