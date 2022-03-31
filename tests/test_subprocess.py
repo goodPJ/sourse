@@ -2,6 +2,7 @@ from re import sub
 import unittest
 import subprocess
 from time import sleep
+from xml.etree.ElementTree import tostring
 from gradescope_utils.autograder_utils.decorators import weight, number
 
 from utils import *
@@ -67,19 +68,20 @@ class Test01_Setup(unittest.TestCase):
 class Test02_Execution(unittest.TestCase):
     @number("2")
     @weight(25)
-    def test_Menu(self):
+    def test_simple_loop_nverbose(self):
         """Check that prompt exists"""
         # Run program with "q" as the only input.
         # Make sure that "\n" follows every input item, as that represents pressing enter
         # If you wanted to enter "a", then "b", then "c", you would do txtContents="a\nb\nc\n"
-        submission = runProgram(inputFile='simple_loop.in')
-        #print(submission.output)
+        inputFile = open("simple_loop.in", "r")
+        inputString = inputFile.read()
+        submission = runProgram(txtContents= inputString)
         # Array of expected strings
         expectedFile = open("simple_loop.output", "r")
         expectedArr = expectedFile.read().split("\n")
 
         # Error message
-        errorMsg = f"failed at case:   , - 100 { submission.output}"        
+        errorMsg = f"failed at case: simple_loop, non-verbose, - 10 pts"        
         # Iterate through every expected string. If it isn't present in the submission's output, display the error message
         for expected in expectedArr:
             # MAKE SURE YOU USE THE `clean()` function!
@@ -87,3 +89,25 @@ class Test02_Execution(unittest.TestCase):
             # You want to use clean on `expected` and the submission's output to ensure students aren't penalized for whitespace or capitalization
             if clean(expected) not in clean(submission.output):
                 raise AssertionError(errorMsg)
+
+    # def test_simple_loop_verbose(self):
+    #     """Check that prompt exists"""
+    #     # Run program with "q" as the only input.
+    #     # Make sure that "\n" follows every input item, as that represents pressing enter
+    #     # If you wanted to enter "a", then "b", then "c", you would do txtContents="a\nb\nc\n"
+    #     inputFile = open("simple_loop.in", "r")
+    #     inputString = inputFile.read()
+    #     submission = runProgram(txtContents= "-v" + inputString)
+    #     # Array of expected strings
+    #     expectedFile = open("simple_loop.verbose", "r")
+    #     expectedArr = expectedFile.read().split("\n")
+
+    #     # Error message
+    #     errorMsg = f"failed at case: simple_loop, verbose, - 20 pts"        
+    #     # Iterate through every expected string. If it isn't present in the submission's output, display the error message
+    #     for expected in expectedArr:
+    #         # MAKE SURE YOU USE THE `clean()` function!
+    #         # This function removes all whitespace and capitalization from the string that is passed in
+    #         # You want to use clean on `expected` and the submission's output to ensure students aren't penalized for whitespace or capitalization
+    #         if clean(expected) not in clean(submission.output):
+    #             raise AssertionError(errorMsg)
