@@ -135,10 +135,10 @@ def runProgram(executable: str = None, inputFile: str = None, txtContents: str =
     stderr = '' if results.stderr is None else results.stderr.decode('utf-8')
     
     # If the standard output or error are longer than 1500 chars, truncate them
-    truncationMessage = '\n\n** The output exceeded 1500 characters, so it was truncated **'
-    if len(stdout) > 1500:
+    truncationMessage = '\n\n** The output exceeded 500000 characters, so it was truncated **'
+    if len(stdout) > 500000:
         stdout = stdout[:1500] + truncationMessage
-    if len(stderr) > 1500:
+    if len(stderr) > 500000:
         stderr = stderr[:1500] + truncationMessage
 
     # Create a `Submission` object containing the results of the program's execution and return it
