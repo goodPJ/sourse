@@ -26,7 +26,7 @@ class Test01_Setup(unittest.TestCase):
     # Use `number` to set the display order for test cases on Gradescope. Does not affect execution order.
     # Use `weight` to specify how many points you want this test case to be worth.
     @number("0")
-    @weight(1)
+    @weight(0)
     def test_checkFiles(self):
         """Ensure all required files are present"""
         
@@ -37,7 +37,7 @@ class Test01_Setup(unittest.TestCase):
 
 
     @number("1")
-    @weight(5)
+    @weight(0)
     def test_Compile(self):
         """Clean Compile"""
         
@@ -45,7 +45,7 @@ class Test01_Setup(unittest.TestCase):
         copyFiles(self.files)
 
         #can change the make command here if necessary
-        fib = subprocess.Popen(["gcc sim.c -o sim"], shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        fib = subprocess.Popen(["gcc sim.c -o sim.out"], shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         errors = fib.stderr.read().strip().decode('utf-8')
         fib.kill()
         fib.terminate()
@@ -55,7 +55,7 @@ class Test01_Setup(unittest.TestCase):
         
         # Display errors if there are any
         if errors != "":
-            msg = "Unable to cleanly compile program. Try compiling with the \"-Wall\" flag and see if any errors occur.\n"
+            msg = "Unable to cleanly compile program.\n"
             msg += "Compilation errors are as follows:\n"
             msg += errors
             raise AssertionError(msg)
@@ -65,24 +65,24 @@ class Test01_Setup(unittest.TestCase):
 # Any test cases that are put in the same class as each other should be fully independent and should not rely on each other.
 class Test02_Execution(unittest.TestCase):
     @number("2")
-    @weight(25)
-    def test_Menu(self):
-        """Check that prompt exists"""
+    @weight(5)
+    def test_1(self):
+        """test case: bad_bct, non verbose"""
         # Run program with "q" as the only input.
         # Make sure that "\n" follows every input item, as that represents pressing enter
         # If you wanted to enter "a", then "b", then "c", you would do txtContents="a\nb\nc\n"
         
-        inputFile = open("bad_bct.in", "r")
+        inputFile = open("bad_bct.txt", "r")
         inputString = inputFile.read()
         submission = runProgram(txtContents=inputString)
 
         # Array of expected strings
-        expectedFile = open("bad_bct.output", "r")
+        expectedFile = open("bad_bct_output.txt", "r")
         expectedString = expectedFile.read()
         expectedArr = expectedString.split("\n")
 
         # Error message
-        errorMsg = f"Your menu doesn't seem to match what was expected. Double-check that your output matches what was provided in the example document. Your program's output was:\n{submission.output}"
+        errorMsg = f"Failed at test case: bad_bct.in(non verbose), recheck your output. -5pts\n{submission.output}"
         
         # Iterate through every expected string. If it isn't present in the submission's output, display the error message
         for expected in expectedArr:
@@ -93,24 +93,197 @@ class Test02_Execution(unittest.TestCase):
                 raise AssertionError(errorMsg)
     
     @number("3")
-    @weight(25)
-    def test_Menu_1(self):
-        """Check that prompt exists"""
+    @weight(5)
+    def test_2(self):
+        """test case: bad_load, non verbose"""
         # Run program with "q" as the only input.
         # Make sure that "\n" follows every input item, as that represents pressing enter
         # If you wanted to enter "a", then "b", then "c", you would do txtContents="a\nb\nc\n"
         
-        inputFile = open("bad_load.in", "r")
+        inputFile = open("bad_load.txt", "r")
         inputString = inputFile.read()
         submission = runProgram(txtContents=inputString)
 
         # Array of expected strings
-        expectedFile = open("bad_load.output", "r")
+        expectedFile = open("bad_load_output.txt", "r")
         expectedString = expectedFile.read()
         expectedArr = expectedString.split("\n")
 
         # Error message
-        errorMsg = f"Your menu doesn't seem to match what was expected. Double-check that your output matches what was provided in the example document. Your program's output was:\n{submission.output}"
+        errorMsg = f"Failed at test case: bad_load.in(non verbose), recheck your output. -5pts\n{submission.output}"
+        
+        # Iterate through every expected string. If it isn't present in the submission's output, display the error message
+        for expected in expectedArr:
+            # MAKE SURE YOU USE THE `clean()` function!
+            # This function removes all whitespace and capitalization from the string that is passed in
+            # You want to use clean on `expected` and the submission's output to ensure students aren't penalized for whitespace or capitalization
+            if clean(expected) not in clean(submission.output):
+                raise AssertionError(errorMsg)
+
+    @number("4")
+    @weight(15)
+    def test_3(self):
+        """test case: compare, verbose"""
+        # Run program with "q" as the only input.
+        # Make sure that "\n" follows every input item, as that represents pressing enter
+        # If you wanted to enter "a", then "b", then "c", you would do txtContents="a\nb\nc\n"
+        
+
+        inputFile = open("compare.txt", "r")
+        inputString = inputFile.read()
+        submission = runProgram(txtContents=inputString, args=['-v'])
+
+        # Array of expected strings
+        expectedFile = open("compare_verbose.txt", "r")
+        expectedString = expectedFile.read()
+        expectedArr = expectedString.split("\n")
+
+        # Error message
+        errorMsg = f"Failed at test case: compare.in(verbose), recheck your output. -15pts\n{submission.output}"
+        
+        # Iterate through every expected string. If it isn't present in the submission's output, display the error message
+        for expected in expectedArr:
+            # MAKE SURE YOU USE THE `clean()` function!
+            # This function removes all whitespace and capitalization from the string that is passed in
+            # You want to use clean on `expected` and the submission's output to ensure students aren't penalized for whitespace or capitalization
+            if clean(expected) not in clean(submission.output):
+                raise AssertionError(errorMsg)
+
+    @number("5")
+    @weight(5)
+    def test_4(self):
+        """test case: oor_pc, verbose"""
+        # Run program with "q" as the only input.
+        # Make sure that "\n" follows every input item, as that represents pressing enter
+        # If you wanted to enter "a", then "b", then "c", you would do txtContents="a\nb\nc\n"
+        
+
+        inputFile = open("oor_pc.txt", "r")
+        inputString = inputFile.read()
+        submission = runProgram(txtContents=inputString, args=['-v'])
+
+        # Array of expected strings
+        expectedFile = open("oor_pc_verbose.txt", "r")
+        expectedString = expectedFile.read()
+        expectedArr = expectedString.split("\n")
+
+        # Error message
+        errorMsg = f"Failed at test case: oor_pc.in(verbose), recheck your output. -5pts\n{submission.output}"
+        
+        # Iterate through every expected string. If it isn't present in the submission's output, display the error message
+        for expected in expectedArr:
+            # MAKE SURE YOU USE THE `clean()` function!
+            # This function removes all whitespace and capitalization from the string that is passed in
+            # You want to use clean on `expected` and the submission's output to ensure students aren't penalized for whitespace or capitalization
+            if clean(expected) not in clean(submission.output):
+                raise AssertionError(errorMsg)
+
+    @number("6")
+    @weight(25)
+    def test_5(self):
+        """test case: regular_loop, verbose"""
+        # Run program with "q" as the only input.
+        # Make sure that "\n" follows every input item, as that represents pressing enter
+        # If you wanted to enter "a", then "b", then "c", you would do txtContents="a\nb\nc\n"
+        
+
+        inputFile = open("regular_loop.txt", "r")
+        inputString = inputFile.read()
+        submission = runProgram(txtContents=inputString, args=['-v'])
+
+        # Array of expected strings
+        expectedFile = open("regular_loop_verbose.txt", "r")
+        expectedString = expectedFile.read()
+        expectedArr = expectedString.split("\n")
+
+        # Error message
+        errorMsg = f"Failed at test case: regular_loop.in(verbose), recheck your output. -25pts\n{submission.output}"
+        
+        # Iterate through every expected string. If it isn't present in the submission's output, display the error message
+        for expected in expectedArr:
+            # MAKE SURE YOU USE THE `clean()` function!
+            # This function removes all whitespace and capitalization from the string that is passed in
+            # You want to use clean on `expected` and the submission's output to ensure students aren't penalized for whitespace or capitalization
+            if clean(expected) not in clean(submission.output):
+                raise AssertionError(errorMsg)
+
+    @number("7")
+    @weight(15)
+    def test_6(self):
+        """test case: simple_add, verbose"""
+        # Run program with "q" as the only input.
+        # Make sure that "\n" follows every input item, as that represents pressing enter
+        # If you wanted to enter "a", then "b", then "c", you would do txtContents="a\nb\nc\n"
+        
+
+        inputFile = open("simple_add.txt", "r")
+        inputString = inputFile.read()
+        submission = runProgram(txtContents=inputString, args=['-v'])
+
+        # Array of expected strings
+        expectedFile = open("simple_add_verbose.txt", "r")
+        expectedString = expectedFile.read()
+        expectedArr = expectedString.split("\n")
+
+        # Error message
+        errorMsg = f"Failed at test case: simple_add.in(verbose), recheck your output. -15pts\n{submission.output}"
+        
+        # Iterate through every expected string. If it isn't present in the submission's output, display the error message
+        for expected in expectedArr:
+            # MAKE SURE YOU USE THE `clean()` function!
+            # This function removes all whitespace and capitalization from the string that is passed in
+            # You want to use clean on `expected` and the submission's output to ensure students aren't penalized for whitespace or capitalization
+            if clean(expected) not in clean(submission.output):
+                raise AssertionError(errorMsg)
+
+    @number("8")
+    @weight(20)
+    def test_7(self):
+        """test case: simple_loop, verbose"""
+        # Run program with "q" as the only input.
+        # Make sure that "\n" follows every input item, as that represents pressing enter
+        # If you wanted to enter "a", then "b", then "c", you would do txtContents="a\nb\nc\n"
+        
+
+        inputFile = open("simple_loop.txt", "r")
+        inputString = inputFile.read()
+        submission = runProgram(txtContents=inputString, args=['-v'])
+
+        # Array of expected strings
+        expectedFile = open("simple_loop_verbose.txt", "r")
+        expectedString = expectedFile.read()
+        expectedArr = expectedString.split("\n")
+
+        # Error message
+        errorMsg = f"Failed at test case: simple_loop.in(verbose), recheck your output. -20pts\n{submission.output}"
+        
+        # Iterate through every expected string. If it isn't present in the submission's output, display the error message
+        for expected in expectedArr:
+            # MAKE SURE YOU USE THE `clean()` function!
+            # This function removes all whitespace and capitalization from the string that is passed in
+            # You want to use clean on `expected` and the submission's output to ensure students aren't penalized for whitespace or capitalization
+            if clean(expected) not in clean(submission.output):
+                raise AssertionError(errorMsg)
+
+    @number("9")
+    @weight(10)
+    def test_8(self):
+        """test case: simple_loop, non verbose"""
+        # Run program with "q" as the only input.
+        # Make sure that "\n" follows every input item, as that represents pressing enter
+        # If you wanted to enter "a", then "b", then "c", you would do txtContents="a\nb\nc\n"
+        
+        inputFile = open("simple_loop.txt", "r")
+        inputString = inputFile.read()
+        submission = runProgram(txtContents=inputString)
+
+        # Array of expected strings
+        expectedFile = open("simple_loop_output.txt", "r")
+        expectedString = expectedFile.read()
+        expectedArr = expectedString.split("\n")
+
+        # Error message
+        errorMsg = f"Failed at test case: simple_loop.in(non verbose), recheck your output. -10pts\n{submission.output}"
         
         # Iterate through every expected string. If it isn't present in the submission's output, display the error message
         for expected in expectedArr:

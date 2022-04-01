@@ -82,7 +82,7 @@ class Submission:
         self.timedout = timedout
 
 # Runs the program
-def runProgram(executable: str = None, inputFile: str = None, txtContents: str = None, timeout: float = 0.1) -> str:
+def runProgram(executable: str = None, inputFile: str = None, txtContents: str = None, timeout: float = 0.1, args = None) -> str:
     """
     Run the specified executable with given input and return its output
 
@@ -113,9 +113,13 @@ def runProgram(executable: str = None, inputFile: str = None, txtContents: str =
         sleep(1) # Sometimes, not having this would result in test cases being unable to access the executable,
                     # presumably because another test case was still running.
 
+        commandArray = [executable]
+        if args is not None:
+            commandArray += args
+
         # Run the code submission, use txtContents to serve as user input, and timeout after `timeout` seconds
         # `subprocess.run()` returns a `CompletedProcess` object which contains the stdout and stderr
-        results = subprocess.run([executable], 
+        results = subprocess.run(commandArray,
                         stdout=subprocess.PIPE,
                         timeout=timeout,
                         input=txtContents)
@@ -137,9 +141,9 @@ def runProgram(executable: str = None, inputFile: str = None, txtContents: str =
     # If the standard output or error are longer than 1500 chars, truncate them
     truncationMessage = '\n\n** The output exceeded 500000 characters, so it was truncated **'
     if len(stdout) > 500000:
-        stdout = stdout[:1500] + truncationMessage
+        stdout = stdout[:500000] + truncationMessage
     if len(stderr) > 500000:
-        stderr = stderr[:1500] + truncationMessage
+        stderr = stderr[:500000] + truncationMessage
 
     # Create a `Submission` object containing the results of the program's execution and return it
     submission = Submission(stdout, stderr, timedout)
